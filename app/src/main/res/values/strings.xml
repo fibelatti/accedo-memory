@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Accedo Memory</string>
+
+    <!-- Generics -->
+    <string name="hint_ok">OK</string>
+    <string name="hint_yes">Yes</string>
+    <string name="hint_no">No</string>
+
+    <!-- MemoryGameActivity -->
+    <string name="memory_game_menu_action_new_game">New Game</string>
+    <string name="memory_game_menu_action_high_scores">High Scores</string>
+
 </resources>
