@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Accedo Memory</string>
+
+    <!-- Generics -->
+    <string name="hint_ok">OK</string>
+    <string name="hint_yes">Yes</string>
+    <string name="hint_no">No</string>
+
 </resources>
