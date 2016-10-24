@@ -10,12 +10,30 @@
 
     <include layout="@layout/toolbar_default" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/padding_smaller"
-        android:paddingRight="@dimen/padding_smaller"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:id="@+id/text_score"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/activity_memory_game_score_layout_height"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:text="@string/memory_game_text_score"
+            android:textColor="@color/colorWhiteOpaque"
+            android:textSize="@dimen/text_size_large"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/text_score"
+            android:paddingLeft="@dimen/padding_smaller"
+            android:paddingRight="@dimen/padding_smaller"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
