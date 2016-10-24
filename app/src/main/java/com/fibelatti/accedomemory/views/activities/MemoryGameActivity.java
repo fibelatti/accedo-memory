@@ -3,6 +3,7 @@ package com.fibelatti.accedomemory.views.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -63,6 +64,12 @@ public class MemoryGameActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 //        setUpRecyclerView();
+        ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+
     }
 
 //    private void setUpRecyclerView() {
