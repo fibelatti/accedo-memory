@@ -1,18 +1,44 @@
 package com.fibelatti.accedomemory.helpers;
 
-import android.content.Context;
-import android.support.v4.content.ContextCompat;
+import android.os.Handler;
 
+import com.fibelatti.accedomemory.Constants;
 import com.fibelatti.accedomemory.R;
 import com.fibelatti.accedomemory.models.Card;
+import com.fibelatti.accedomemory.models.MatchResult;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class GameHelper {
-    public static List<Card> createGame(Context context) {
-        List<Card> cards = new ArrayList<>(16);
+    private static final Object syncLock = new Object();
+    private static GameHelper instance;
+
+    private List<Card> currentGame = new ArrayList<>(16);
+    private int currentScore = 0;
+    private boolean isMatched = false;
+    private Card firstCard, secondCard;
+
+    private Handler handler = new Handler();
+
+    private GameHelper() {
+        BusHelper.getInstance().getBus().register(this);
+    }
+
+    public static GameHelper getInstance() {
+        if (instance == null) {
+            synchronized (syncLock) {
+                if (instance == null)
+                    instance = new GameHelper();
+            }
+        }
+        return instance;
+    }
+
+    public List<Card> createGame() {
+        currentGame = new ArrayList<>(16);
         List<Integer> images = new ArrayList<>(16);
 
         for (int i = 0; i < 2; i++) {
@@ -29,9 +55,33 @@ public class GameHelper {
         Collections.shuffle(images);
 
         for (int index : images) {
-            cards.add(new Card(ContextCompat.getDrawable(context, index)));
+            currentGame.add(new Card(index));
         }
 
-        return cards;
+        return currentGame;
+    }
+
+    @Subscribe
+    public void cardFlipped(Card currentCard) {
+        if (firstCard == null) {
+            firstCard = currentCard;
+        } else if (secondCard == null) {
+            secondCard = currentCard;
+            isMatched = firstCard.getDrawableId() == secondCard.getDrawableId();
+            currentScore += isMatched ? Constants.SCORE_SUCCESS : Constants.SCORE_FAILURE;
+
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    BusHelper.getInstance().getBus().post(new MatchResult(isMatched));
+
+                    isMatched = false;
+                    firstCard = null;
+                    secondCard = null;
+                }
+            };
+
+            handler.postDelayed(runnable, isMatched ? 0 : Constants.ROUND_DELAY);
+        }
     }
 }
