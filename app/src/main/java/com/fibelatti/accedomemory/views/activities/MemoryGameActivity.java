@@ -1,6 +1,7 @@
 package com.fibelatti.accedomemory.views.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -14,15 +15,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fibelatti.accedomemory.R;
-import com.fibelatti.accedomemory.adapters.MemoryGameAdapter;
-import com.fibelatti.accedomemory.helpers.GameHelper;
+import com.fibelatti.accedomemory.helpers.AlertDialogHelper;
+import com.fibelatti.accedomemory.models.Card;
+import com.fibelatti.accedomemory.presenters.memorygame.IMemoryGamePresenter;
+import com.fibelatti.accedomemory.presenters.memorygame.IMemoryGameView;
+import com.fibelatti.accedomemory.presenters.memorygame.MemoryGamePresenter;
 import com.fibelatti.accedomemory.utils.ConfigurationUtils;
+import com.fibelatti.accedomemory.views.adapters.MemoryGameAdapter;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MemoryGameActivity extends AppCompatActivity {
+public class MemoryGameActivity extends AppCompatActivity
+        implements IMemoryGameView {
     private Context context;
+    private IMemoryGamePresenter presenter;
     private MemoryGameAdapter adapter;
 
     @BindView(R.id.coordinator_layout)
@@ -37,14 +46,28 @@ public class MemoryGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         context = getApplicationContext();
-        adapter = new MemoryGameAdapter(this, GameHelper.createGame(context));
 
+        setUpPresenter();
         setUpLayout();
+        setUpRecyclerView();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        presenter.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 
     @Override
@@ -57,6 +80,7 @@ public class MemoryGameActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new_game:
+                newGame();
                 return true;
             case R.id.action_high_scores:
                 return true;
@@ -73,6 +97,20 @@ public class MemoryGameActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void setPresenter(IMemoryGamePresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void onNewGame(List<Card> cardList) {
+        adapter.setCardList(cardList);
+    }
+
+    private void setUpPresenter() {
+        MemoryGamePresenter.createPresenter(context, this);
+    }
+
     private void setUpLayout() {
         setContentView(R.layout.activity_memory_game);
         ButterKnife.bind(this);
@@ -81,15 +119,27 @@ public class MemoryGameActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayShowTitleEnabled(false);
-
-        setUpRecyclerView();
-    }
-
     }
 
     private void setUpRecyclerView() {
+        adapter = new MemoryGameAdapter(this);
+
         recyclerView.setLayoutManager(new GridLayoutManager(this, ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context)));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+    }
+
+
+    private void newGame() {
+        AlertDialogHelper dialogHelper = new AlertDialogHelper(this);
+        dialogHelper.createYesNoDialog(
+                getString(R.string.memory_game_dialog_title_new_game),
+                getString(R.string.memory_game_dialog_text_new_game),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        presenter.newGame();
+                    }
+                },
+                null);
     }
 }
