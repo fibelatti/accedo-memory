@@ -1,22 +1,20 @@
 package com.fibelatti.accedomemory.models;
 
-import android.graphics.drawable.Drawable;
-
 public class Card {
     private final static int STATUS_FACE_DOWN = 0;
     private final static int STATUS_FACE_UP = 1;
     private final static int STATUS_MATCHED = 2;
 
-    private Drawable image;
+    private int drawableId;
     private int status;
 
-    public Card(Drawable image) {
-        this.image = image;
+    public Card(int drawableId) {
+        this.drawableId = drawableId;
         this.status = STATUS_FACE_DOWN;
     }
 
-    public Drawable getImage() {
-        return image;
+    public int getDrawableId() {
+        return drawableId;
     }
 
     public boolean isFaceDown() {
