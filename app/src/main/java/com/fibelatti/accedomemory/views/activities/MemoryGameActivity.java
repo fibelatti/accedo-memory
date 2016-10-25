@@ -13,14 +13,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.fibelatti.accedomemory.R;
 import com.fibelatti.accedomemory.helpers.AlertDialogHelper;
+import com.fibelatti.accedomemory.helpers.GameHelper;
+import com.fibelatti.accedomemory.helpers.IGameHelperListener;
 import com.fibelatti.accedomemory.models.Card;
 import com.fibelatti.accedomemory.presenters.memorygame.IMemoryGamePresenter;
 import com.fibelatti.accedomemory.presenters.memorygame.IMemoryGameView;
 import com.fibelatti.accedomemory.presenters.memorygame.MemoryGamePresenter;
 import com.fibelatti.accedomemory.utils.ConfigurationUtils;
+import com.fibelatti.accedomemory.views.Navigator;
 import com.fibelatti.accedomemory.views.adapters.MemoryGameAdapter;
 
 import java.util.List;
@@ -29,7 +33,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MemoryGameActivity extends AppCompatActivity
-        implements IMemoryGameView {
+        implements IMemoryGameView,
+        IGameHelperListener {
     private Context context;
     private IMemoryGamePresenter presenter;
     private MemoryGameAdapter adapter;
@@ -38,6 +43,8 @@ public class MemoryGameActivity extends AppCompatActivity
     CoordinatorLayout layout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.text_score)
+    TextView textScore;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -47,27 +54,30 @@ public class MemoryGameActivity extends AppCompatActivity
 
         context = getApplicationContext();
 
-        setUpPresenter();
         setUpLayout();
         setUpRecyclerView();
+        setUpPresenter();
+        GameHelper.getInstance().addListener(this);
+
+        presenter.onCreate();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        presenter.onResume();
+        if (presenter != null) presenter.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.onPause();
+        if (presenter != null) presenter.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        presenter.onDestroy();
+        if (presenter != null) presenter.onDestroy();
     }
 
     @Override
@@ -83,6 +93,7 @@ public class MemoryGameActivity extends AppCompatActivity
                 newGame();
                 return true;
             case R.id.action_high_scores:
+                navigateToHighScores();
                 return true;
         }
 
@@ -94,21 +105,21 @@ public class MemoryGameActivity extends AppCompatActivity
         super.onConfigurationChanged(newConfig);
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context)));
-        adapter.notifyDataSetChanged();
+        if (adapter != null) adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void setPresenter(IMemoryGamePresenter presenter) {
-        this.presenter = presenter;
+    public void onGameChanged(List<Card> cardList) {
+        if (adapter != null) adapter.setCardList(cardList);
     }
 
     @Override
-    public void onNewGame(List<Card> cardList) {
-        adapter.setCardList(cardList);
+    public void onCurrentScoreChanged(int currentScore) {
+        textScore.setText(getString(R.string.memory_game_text_score, currentScore));
     }
 
     private void setUpPresenter() {
-        MemoryGamePresenter.createPresenter(context, this);
+        this.presenter = MemoryGamePresenter.createPresenter(context, this);
     }
 
     private void setUpLayout() {
@@ -119,6 +130,8 @@ public class MemoryGameActivity extends AppCompatActivity
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayShowTitleEnabled(false);
+
+        textScore.setText(getString(R.string.memory_game_text_score, 0));
     }
 
     private void setUpRecyclerView() {
@@ -141,5 +154,10 @@ public class MemoryGameActivity extends AppCompatActivity
                     }
                 },
                 null);
+    }
+
+    private void navigateToHighScores() {
+        Navigator navigator = new Navigator(this);
+        navigator.goToHighScores();
     }
 }

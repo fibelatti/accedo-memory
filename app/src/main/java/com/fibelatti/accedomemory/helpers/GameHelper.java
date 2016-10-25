@@ -16,6 +16,8 @@ public class GameHelper {
     private static final Object syncLock = new Object();
     private static GameHelper instance;
 
+    private List<IGameHelperListener> listeners = new ArrayList<>();
+
     private List<Card> currentGame = new ArrayList<>(16);
     private int currentScore = 0;
     private boolean isMatched = false;
@@ -35,6 +37,14 @@ public class GameHelper {
             }
         }
         return instance;
+    }
+
+    public void addListener(IGameHelperListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeListener(IGameHelperListener listener) {
+        this.listeners.remove(listener);
     }
 
     public List<Card> createGame() {
@@ -74,6 +84,7 @@ public class GameHelper {
                 @Override
                 public void run() {
                     BusHelper.getInstance().getBus().post(new MatchResult(isMatched));
+                    notifyCurrentScoreChanged();
 
                     isMatched = false;
                     firstCard = null;
@@ -82,6 +93,12 @@ public class GameHelper {
             };
 
             handler.postDelayed(runnable, isMatched ? 0 : Constants.ROUND_DELAY);
+        }
+    }
+
+    private void notifyCurrentScoreChanged() {
+        for (IGameHelperListener listener : listeners) {
+            listener.onCurrentScoreChanged(currentScore);
         }
     }
 }

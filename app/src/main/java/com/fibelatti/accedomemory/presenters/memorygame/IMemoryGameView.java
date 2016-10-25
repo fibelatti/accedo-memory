@@ -5,7 +5,5 @@ import com.fibelatti.accedomemory.models.Card;
 import java.util.List;
 
 public interface IMemoryGameView {
-    void setPresenter(IMemoryGamePresenter presenter);
-
-    void onNewGame(List<Card> cardList);
+    void onGameChanged(List<Card> cardList);
 }

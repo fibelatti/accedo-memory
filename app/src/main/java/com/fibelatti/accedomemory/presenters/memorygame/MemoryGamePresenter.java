@@ -14,7 +14,6 @@ public class MemoryGamePresenter
     private MemoryGamePresenter(Context context, IMemoryGameView view) {
         this.context = context;
         this.view = view;
-        this.view.setPresenter(this);
         this.gameHelper = GameHelper.getInstance();
         this.onCreate();
     }
@@ -25,7 +24,7 @@ public class MemoryGamePresenter
 
     @Override
     public void onCreate() {
-
+        view.onGameChanged(gameHelper.getCurrentGame());
     }
 
     @Override
@@ -47,6 +46,6 @@ public class MemoryGamePresenter
 
     @Override
     public void newGame() {
-        view.onNewGame(gameHelper.createGame());
+        view.onGameChanged(gameHelper.createGame());
     }
 }
