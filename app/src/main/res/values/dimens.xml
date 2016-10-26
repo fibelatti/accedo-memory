@@ -27,4 +27,6 @@
     <dimen name="card_radius">2dp</dimen>
 
     <dimen name="activity_memory_game_score_layout_height">40dp</dimen>
+
+    <dimen name="activity_high_score_column_width">30dp</dimen>
 </resources>

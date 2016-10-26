@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MemoryGameAdapter extends BaseAdapter {
+
     private Context context;
     private List<Card> cardList;
 

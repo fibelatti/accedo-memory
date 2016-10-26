@@ -15,12 +15,23 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/activity_memory_game_score_layout_height"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:text="@string/high_score_title"
+            android:textColor="@color/colorWhiteOpaque"
+            android:textSize="@dimen/text_size_large"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <ListView
+            android:id="@+id/list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/padding_smaller"
-            android:paddingRight="@dimen/padding_smaller"
+            android:layout_below="@+id/text_title"
+            android:padding="@dimen/padding_smaller"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </RelativeLayout>
 

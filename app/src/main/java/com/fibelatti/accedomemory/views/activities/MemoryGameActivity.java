@@ -56,7 +56,7 @@ public class MemoryGameActivity extends AppCompatActivity
         context = getApplicationContext();
 
         setUpLayout();
-        setUpRecyclerView();
+        setUpContentView();
         setUpPresenter();
 
         dialogHelper = new AlertDialogHelper(this);
@@ -161,7 +161,7 @@ public class MemoryGameActivity extends AppCompatActivity
         textScore.setText(getString(R.string.memory_game_text_score, 0));
     }
 
-    private void setUpRecyclerView() {
+    private void setUpContentView() {
         adapter = new MemoryGameAdapter(this);
 
         gridView.setNumColumns(ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context));
