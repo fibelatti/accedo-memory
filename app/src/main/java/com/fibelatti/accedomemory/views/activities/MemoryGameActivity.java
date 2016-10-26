@@ -10,10 +10,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.fibelatti.accedomemory.R;
@@ -48,8 +48,8 @@ public class MemoryGameActivity extends AppCompatActivity
     Toolbar toolbar;
     @BindView(R.id.text_score)
     TextView textScore;
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    @BindView(R.id.grid_view)
+    GridView gridView;
     //endregion
 
     @Override
@@ -108,8 +108,7 @@ public class MemoryGameActivity extends AppCompatActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
-        recyclerView.setLayoutManager(new GridLayoutManager(this, ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context)));
+        gridView.setNumColumns(ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context));
         if (adapter != null) adapter.notifyDataSetChanged();
     }
 
@@ -170,9 +169,8 @@ public class MemoryGameActivity extends AppCompatActivity
     private void setUpRecyclerView() {
         adapter = new MemoryGameAdapter(this);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this, ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context)));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+        gridView.setNumColumns(ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context));
+        gridView.setAdapter(adapter);
     }
 
 
