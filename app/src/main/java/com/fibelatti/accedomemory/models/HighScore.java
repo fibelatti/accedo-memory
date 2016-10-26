@@ -41,6 +41,10 @@ public class HighScore {
         return playerScore;
     }
 
+    public String getPlayerScoreString() {
+        return playerScore.toString();
+    }
+
     public void setPlayerScore(Integer playerScore) {
         this.playerScore = playerScore;
     }

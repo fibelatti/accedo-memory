@@ -1,22 +1,22 @@
 package com.fibelatti.accedomemory.views.activities;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.fibelatti.accedomemory.R;
+import com.fibelatti.accedomemory.models.HighScore;
 import com.fibelatti.accedomemory.presenters.highscore.HighScorePresenter;
 import com.fibelatti.accedomemory.presenters.highscore.IHighScorePresenter;
 import com.fibelatti.accedomemory.presenters.highscore.IHighScoreView;
 import com.fibelatti.accedomemory.views.adapters.HighScoreAdapter;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,12 +27,14 @@ public class HighScoreActivity extends AppCompatActivity
     private IHighScorePresenter presenter;
     private HighScoreAdapter adapter;
 
+    //region View bindings
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout layout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    @BindView(R.id.list_view)
+    ListView listView;
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,27 +42,29 @@ public class HighScoreActivity extends AppCompatActivity
 
         context = getApplicationContext();
 
-        setUpPresenter();
         setUpLayout();
-        setUpRecyclerView();
+        setUpContentView();
+        setUpPresenter();
+
+        presenter.onCreate();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        presenter.onResume();
+        if (presenter != null) presenter.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.onPause();
+        if (presenter != null) presenter.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        presenter.onDestroy();
+        if (presenter != null) presenter.onDestroy();
     }
 
     @Override
@@ -75,17 +79,12 @@ public class HighScoreActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void setPresenter(IHighScorePresenter presenter) {
-        this.presenter = presenter;
+    public void onDataFetched(List<HighScore> highScoreList) {
+        if (adapter != null) adapter.setHighScoreList(highScoreList);
     }
 
     private void setUpPresenter() {
-        HighScorePresenter.createPresenter(context, this);
+        this.presenter = HighScorePresenter.createPresenter(context, this);
     }
 
     private void setUpLayout() {
@@ -101,11 +100,8 @@ public class HighScoreActivity extends AppCompatActivity
         }
     }
 
-    private void setUpRecyclerView() {
+    private void setUpContentView() {
         adapter = new HighScoreAdapter(this);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+        listView.setAdapter(adapter);
     }
 }

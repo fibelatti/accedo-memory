@@ -26,4 +26,8 @@
     <string name="dialog_new_high_score_button">Add score</string>
     <string name="dialog_new_high_score_input_validation">Invalid input!</string>
 
+    <!-- HighScoreActivity -->
+    <string name="high_score_title">High Scores Rank</string>
+
+    <string name="high_score_column_text_rank">#%d</string>
 </resources>
