@@ -25,7 +25,6 @@ import com.fibelatti.accedomemory.views.adapters.MemoryGameAdapter;
 import com.fibelatti.accedomemory.views.fragments.HighScoreInputFragment;
 import com.fibelatti.accedomemory.views.fragments.IHighScoreInputFragmentListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -119,15 +118,15 @@ public class MemoryGameActivity extends AppCompatActivity
 
     @Override
     public void onNewHighScore(int rank, int score) {
+        presenter.newGame();
+
         DialogFragment inputHighScoreFragment = HighScoreInputFragment.newInstance(score, rank);
         inputHighScoreFragment.show(getSupportFragmentManager(), HighScoreInputFragment.TAG);
-
-        adapter.setCardList(new ArrayList<Card>());
     }
 
     @Override
     public void onGameFinished(int rank, int score) {
-        adapter.setCardList(new ArrayList<Card>());
+        presenter.newGame();
 
         dialogHelper.createOkOnlyDialog(
                 getString(R.string.memory_game_dialog_title_game_finished),
@@ -140,8 +139,8 @@ public class MemoryGameActivity extends AppCompatActivity
     }
 
     @Override
-    public void onHighScore(String name) {
-        presenter.saveNewHighScore(name);
+    public void onHighScore(String name, int score) {
+        presenter.saveNewHighScore(name, score);
         navigateToHighScores();
     }
 

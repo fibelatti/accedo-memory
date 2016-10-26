@@ -33,7 +33,10 @@ public class MemoryGamePresenter
     public void onCreate() {
         GameHelper.getInstance().addListener(this);
 
-        if (view != null) view.onGameChanged(gameHelper.getCurrentGame());
+        if (view != null) {
+            view.onGameChanged(gameHelper.getCurrentGame());
+            view.onCurrentScoreChanged(gameHelper.getCurrentScore());
+        }
     }
 
     @Override
@@ -61,8 +64,8 @@ public class MemoryGamePresenter
     }
 
     @Override
-    public boolean saveNewHighScore(String name) {
-        return Database.highScoreDao.saveHighScore(new HighScore(name, gameHelper.getCurrentScore()));
+    public boolean saveNewHighScore(String name, int score) {
+        return Database.highScoreDao.saveHighScore(new HighScore(name, score));
     }
 
     @Override

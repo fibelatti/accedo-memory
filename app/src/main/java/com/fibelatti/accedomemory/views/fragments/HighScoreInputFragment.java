@@ -25,6 +25,8 @@ public class HighScoreInputFragment extends DialogFragment {
 
     private IHighScoreInputFragmentListener listener;
 
+    private int score;
+
     @BindView(R.id.dialog_input_group)
     TextInputLayout dialogHighScoreInputGroup;
     @BindView(R.id.dialog_input)
@@ -58,7 +60,9 @@ public class HighScoreInputFragment extends DialogFragment {
                 .setView(view)
                 .create();
 
-        dialogHighScoreText.setText(getString(R.string.memory_game_dialog_text_new_high_score, getArguments().getInt("score"), getArguments().getInt("rank")));
+        score = getArguments().getInt("score");
+
+        dialogHighScoreText.setText(getString(R.string.memory_game_dialog_text_new_high_score, score, getArguments().getInt("rank")));
         dialogHighScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,7 +87,7 @@ public class HighScoreInputFragment extends DialogFragment {
         if (validatePlayerName(dialogHighScoreInput.getText().toString())) {
             dialogHighScoreInputGroup.setError(null);
             dialogHighScoreInputGroup.setErrorEnabled(false);
-            listener.onHighScore(dialogHighScoreInput.getText().toString());
+            listener.onHighScore(dialogHighScoreInput.getText().toString(), score);
 
             getDialog().dismiss();
         } else {
