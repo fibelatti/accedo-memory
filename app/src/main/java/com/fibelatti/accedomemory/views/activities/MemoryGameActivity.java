@@ -2,18 +2,15 @@ package com.fibelatti.accedomemory.views.activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.fibelatti.accedomemory.R;
@@ -25,7 +22,8 @@ import com.fibelatti.accedomemory.presenters.memorygame.MemoryGamePresenter;
 import com.fibelatti.accedomemory.utils.ConfigurationUtils;
 import com.fibelatti.accedomemory.views.Navigator;
 import com.fibelatti.accedomemory.views.adapters.MemoryGameAdapter;
-import com.fibelatti.accedomemory.views.fragments.InputHighScoreFragment;
+import com.fibelatti.accedomemory.views.fragments.HighScoreInputFragment;
+import com.fibelatti.accedomemory.views.fragments.IHighScoreInputFragmentListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MemoryGameActivity extends AppCompatActivity
-        implements IMemoryGameView,
-        InputHighScoreFragment.InputHighScoreListener {
+        implements IMemoryGameView, IHighScoreInputFragmentListener {
     private Context context;
     private IMemoryGamePresenter presenter;
     private MemoryGameAdapter adapter;
@@ -48,8 +45,8 @@ public class MemoryGameActivity extends AppCompatActivity
     Toolbar toolbar;
     @BindView(R.id.text_score)
     TextView textScore;
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    @BindView(R.id.grid_view)
+    GridView gridView;
     //endregion
 
     @Override
@@ -106,14 +103,6 @@ public class MemoryGameActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        recyclerView.setLayoutManager(new GridLayoutManager(this, ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context)));
-        if (adapter != null) adapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void onGameChanged(List<Card> cardList) {
         if (adapter != null) adapter.setCardList(cardList);
     }
@@ -124,9 +113,14 @@ public class MemoryGameActivity extends AppCompatActivity
     }
 
     @Override
+    public void onRound(List<Card> cardList) {
+        if (adapter != null) adapter.setCardList(cardList);
+    }
+
+    @Override
     public void onNewHighScore(int rank, int score) {
-        DialogFragment inputHighScoreFragment = InputHighScoreFragment.newInstance(score, rank);
-        inputHighScoreFragment.show(getSupportFragmentManager(), "dialog");
+        DialogFragment inputHighScoreFragment = HighScoreInputFragment.newInstance(score, rank);
+        inputHighScoreFragment.show(getSupportFragmentManager(), HighScoreInputFragment.TAG);
 
         adapter.setCardList(new ArrayList<Card>());
     }
@@ -146,7 +140,7 @@ public class MemoryGameActivity extends AppCompatActivity
     }
 
     @Override
-    public void onInputHighScore(String name) {
+    public void onHighScore(String name) {
         presenter.saveNewHighScore(name);
         navigateToHighScores();
     }
@@ -170,9 +164,8 @@ public class MemoryGameActivity extends AppCompatActivity
     private void setUpRecyclerView() {
         adapter = new MemoryGameAdapter(this);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this, ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context)));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+        gridView.setNumColumns(ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context));
+        gridView.setAdapter(adapter);
     }
 
 

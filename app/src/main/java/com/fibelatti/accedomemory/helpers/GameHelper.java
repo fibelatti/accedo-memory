@@ -16,7 +16,6 @@ public class GameHelper implements IGameHelper {
     private static IGameHelper instance;
 
     private List<IGameHelperListener> listeners = new ArrayList<>();
-    private List<IGameHelperResultListener> resultListeners = new ArrayList<>();
 
     private List<Card> currentGame;
     private int currentScore;
@@ -90,12 +89,10 @@ public class GameHelper implements IGameHelper {
     }
 
     @Override
-    public boolean addResultListener(IGameHelperResultListener listener, int index) {
+    public boolean checkCard(int index) {
         cardsClicked++;
         
         if (cardsClicked <= 2 && index != -1 && currentGame.get(index).isFaceDown()) {
-            resultListeners.add(listener);
-
             if (firstCardIndex == -1) {
                 firstCardIndex = index;
                 currentGame.get(index).setStatusFaceUp();
@@ -107,8 +104,6 @@ public class GameHelper implements IGameHelper {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        notifyMatchResult(isMatched);
-
                         setCurrentScore(currentScore + (isMatched ? Constants.SCORE_SUCCESS : Constants.SCORE_FAILURE));
 
                         if (isMatched) {
@@ -121,13 +116,15 @@ public class GameHelper implements IGameHelper {
                             currentGame.get(secondCardIndex).setStatusFaceDown();
                         }
 
+                        notifyRound();
+
                         isMatched = false;
                         firstCardIndex = -1;
                         secondCardIndex = -1;
                     }
                 };
 
-                handler.postDelayed(runnable, isMatched ? 0 : Constants.ROUND_DELAY);
+                handler.postDelayed(runnable, Constants.ROUND_DELAY);
             }
 
             return true;
@@ -137,7 +134,6 @@ public class GameHelper implements IGameHelper {
     }
 
     private void initVariables() {
-        resultListeners.clear();
         setCurrentScore(0);
         currentMatches = 0;
         cardsClicked = 0;
@@ -174,6 +170,14 @@ public class GameHelper implements IGameHelper {
         }
     }
 
+    private void notifyRound() {
+        for (IGameHelperListener listener : listeners) {
+            listener.onRound(currentGame);
+        }
+
+        cardsClicked = 0;
+    }
+
     private void notifyNewHighScore(int rank) {
         for (IGameHelperListener listener : listeners) {
             listener.onNewHighScore(rank, currentScore);
@@ -184,14 +188,5 @@ public class GameHelper implements IGameHelper {
         for (IGameHelperListener listener : listeners) {
             listener.onGameFinished(rank, currentScore);
         }
-    }
-
-    private void notifyMatchResult(boolean isMatched) {
-        for (IGameHelperResultListener listener : resultListeners) {
-            listener.onResult(isMatched);
-        }
-
-        cardsClicked = 0;
-        resultListeners.clear();
     }
 }

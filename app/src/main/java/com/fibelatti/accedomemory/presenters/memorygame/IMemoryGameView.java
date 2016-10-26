@@ -9,6 +9,8 @@ public interface IMemoryGameView {
 
     void onCurrentScoreChanged(int currentScore);
 
+    void onRound(List<Card> cardList);
+
     void onNewHighScore(int rank, int score);
 
     void onGameFinished(int rank, int score);

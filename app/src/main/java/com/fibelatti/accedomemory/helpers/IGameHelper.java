@@ -15,5 +15,5 @@ public interface IGameHelper {
 
     List<Card> createGame();
 
-    boolean addResultListener(IGameHelperResultListener listener, int index);
+    boolean checkCard(int index);
 }
