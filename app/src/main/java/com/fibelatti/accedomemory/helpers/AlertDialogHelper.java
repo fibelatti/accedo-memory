@@ -16,7 +16,7 @@ public class AlertDialogHelper {
     }
 
     public void createOkOnlyDialog(CharSequence dialogTitle, CharSequence dialogMessage,
-                                     DialogInterface.OnClickListener positiveListener) {
+                                   DialogInterface.OnClickListener positiveListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(dialogTitle);
         builder.setMessage(dialogMessage);
@@ -33,8 +33,8 @@ public class AlertDialogHelper {
     }
 
     public void createYesNoDialog(CharSequence dialogTitle, CharSequence dialogMessage,
-                                    DialogInterface.OnClickListener positiveListener,
-                                    DialogInterface.OnClickListener negativeListener) {
+                                  DialogInterface.OnClickListener positiveListener,
+                                  DialogInterface.OnClickListener negativeListener) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(dialogTitle);

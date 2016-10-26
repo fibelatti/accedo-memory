@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_group"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:clickable="true"
@@ -13,8 +14,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_margin="@dimen/card_margin"
-        android:alpha="0"
         android:background="?android:attr/selectableItemBackground"
+        android:descendantFocusability="blocksDescendants"
         card_view:cardCornerRadius="@dimen/card_radius">
 
         <ImageView
@@ -31,6 +32,7 @@
         android:layout_gravity="center"
         android:layout_margin="@dimen/card_margin"
         android:background="?android:attr/selectableItemBackground"
+        android:descendantFocusability="blocksDescendants"
         card_view:cardCornerRadius="@dimen/card_radius">
 
         <ImageView

@@ -5,7 +5,11 @@ import com.fibelatti.accedomemory.models.Card;
 import java.util.List;
 
 public interface IMemoryGameView {
-    void setPresenter(IMemoryGamePresenter presenter);
+    void onGameChanged(List<Card> cardList);
 
-    void onNewGame(List<Card> cardList);
+    void onCurrentScoreChanged(int currentScore);
+
+    void onNewHighScore(int rank, int score);
+
+    void onGameFinished(int rank, int score);
 }

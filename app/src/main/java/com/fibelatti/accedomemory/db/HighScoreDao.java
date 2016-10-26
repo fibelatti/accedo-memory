@@ -61,11 +61,34 @@ public class HighScoreDao extends DbContentProvider
     }
 
     @Override
-    public List<HighScore> fetchTopHighScores(int amount) {
+    public List<HighScore> fetchAllHighScoresHigherThan(int score) {
+        final String order = HIGH_SCORE_COLUMN_PLAYER_SCORE + " DESC";
+
+        final String selectionArgs[] = {String.valueOf(score)};
+        final String selection = HIGH_SCORE_COLUMN_PLAYER_SCORE + " > ?";
+
+        List<HighScore> highScoreList = new ArrayList<>();
+        cursor = super.query(HIGH_SCORE_TABLE, HIGH_SCORE_COLUMNS, selection, selectionArgs, order);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                HighScore highScore = cursorToEntity(cursor);
+                highScoreList.add(highScore);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        return highScoreList;
+    }
+
+    @Override
+    public List<HighScore> fetchTopHighScores(int limit) {
         final String order = HIGH_SCORE_COLUMN_PLAYER_SCORE + " DESC";
 
         List<HighScore> highScoreList = new ArrayList<>();
-        cursor = super.query(HIGH_SCORE_TABLE, HIGH_SCORE_COLUMNS, null, null, order, String.valueOf(amount));
+        cursor = super.query(HIGH_SCORE_TABLE, HIGH_SCORE_COLUMNS, null, null, order, String.valueOf(limit));
 
         if (cursor != null) {
             cursor.moveToFirst();

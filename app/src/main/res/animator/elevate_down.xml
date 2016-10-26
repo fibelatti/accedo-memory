@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:duration="500"
+        android:propertyName="elevation"
+        android:valueFrom="@dimen/card_elevation_enabled"
+        android:valueTo="@dimen/card_elevation_disabled" />
+</set>

@@ -2,19 +2,23 @@ package com.fibelatti.accedomemory.presenters.memorygame;
 
 import android.content.Context;
 
+import com.fibelatti.accedomemory.db.Database;
 import com.fibelatti.accedomemory.helpers.GameHelper;
+import com.fibelatti.accedomemory.helpers.IGameHelper;
+import com.fibelatti.accedomemory.helpers.IGameHelperListener;
+import com.fibelatti.accedomemory.models.HighScore;
 
 public class MemoryGamePresenter
-        implements IMemoryGamePresenter {
+        implements IMemoryGamePresenter,
+        IGameHelperListener {
 
     private Context context;
     private IMemoryGameView view;
-    private GameHelper gameHelper;
+    private IGameHelper gameHelper;
 
     private MemoryGamePresenter(Context context, IMemoryGameView view) {
         this.context = context;
         this.view = view;
-        this.view.setPresenter(this);
         this.gameHelper = GameHelper.getInstance();
         this.onCreate();
     }
@@ -25,7 +29,9 @@ public class MemoryGamePresenter
 
     @Override
     public void onCreate() {
+        GameHelper.getInstance().addListener(this);
 
+        if (view != null) view.onGameChanged(gameHelper.getCurrentGame());
     }
 
     @Override
@@ -47,6 +53,26 @@ public class MemoryGamePresenter
 
     @Override
     public void newGame() {
-        view.onNewGame(gameHelper.createGame());
+        if (view != null) view.onGameChanged(gameHelper.createGame());
+    }
+
+    @Override
+    public boolean saveNewHighScore(String name) {
+        return Database.highScoreDao.saveHighScore(new HighScore(name, gameHelper.getCurrentScore()));
+    }
+
+    @Override
+    public void onCurrentScoreChanged(int currentScore) {
+        if (view != null) view.onCurrentScoreChanged(currentScore);
+    }
+
+    @Override
+    public void onNewHighScore(int rank, int score) {
+        if (view != null) view.onNewHighScore(rank, score);
+    }
+
+    @Override
+    public void onGameFinished(int rank, int score) {
+        if (view != null) view.onGameFinished(rank, score);
     }
 }
