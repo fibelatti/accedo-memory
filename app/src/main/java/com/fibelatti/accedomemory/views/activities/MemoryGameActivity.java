@@ -7,8 +7,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +22,8 @@ import com.fibelatti.accedomemory.presenters.memorygame.MemoryGamePresenter;
 import com.fibelatti.accedomemory.utils.ConfigurationUtils;
 import com.fibelatti.accedomemory.views.Navigator;
 import com.fibelatti.accedomemory.views.adapters.MemoryGameAdapter;
-import com.fibelatti.accedomemory.views.fragments.InputHighScoreFragment;
+import com.fibelatti.accedomemory.views.fragments.HighScoreInputFragment;
+import com.fibelatti.accedomemory.views.fragments.IHighScoreInputFragmentListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MemoryGameActivity extends AppCompatActivity
-        implements IMemoryGameView,
-        InputHighScoreFragment.InputHighScoreListener {
+        implements IMemoryGameView, IHighScoreInputFragmentListener {
     private Context context;
     private IMemoryGamePresenter presenter;
     private MemoryGameAdapter adapter;
@@ -116,8 +114,8 @@ public class MemoryGameActivity extends AppCompatActivity
 
     @Override
     public void onNewHighScore(int rank, int score) {
-        DialogFragment inputHighScoreFragment = InputHighScoreFragment.newInstance(score, rank);
-        inputHighScoreFragment.show(getSupportFragmentManager(), "dialog");
+        DialogFragment inputHighScoreFragment = HighScoreInputFragment.newInstance(score, rank);
+        inputHighScoreFragment.show(getSupportFragmentManager(), HighScoreInputFragment.TAG);
 
         adapter.setCardList(new ArrayList<Card>());
     }
@@ -137,7 +135,7 @@ public class MemoryGameActivity extends AppCompatActivity
     }
 
     @Override
-    public void onInputHighScore(String name) {
+    public void onHighScore(String name) {
         presenter.saveNewHighScore(name);
         navigateToHighScores();
     }

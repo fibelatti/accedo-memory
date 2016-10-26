@@ -3,6 +3,7 @@ package com.fibelatti.accedomemory.views.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -20,15 +21,10 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class InputHighScoreFragment extends DialogFragment {
-    public interface InputHighScoreListener {
-        void onInputHighScore(String name);
-    }
+public class HighScoreInputFragment extends DialogFragment {
+    public final static String TAG = HighScoreInputFragment.class.getSimpleName();
 
-    private InputHighScoreListener listener;
-
-    private int score;
-    private int rank;
+    private IHighScoreInputFragmentListener listener;
 
     @BindView(R.id.dialog_input_group)
     TextInputLayout dialogHighScoreInputGroup;
@@ -39,11 +35,11 @@ public class InputHighScoreFragment extends DialogFragment {
     @BindView(R.id.dialog_button_add)
     ImageButton dialogHighScoreButton;
 
-    public InputHighScoreFragment() {
+    public HighScoreInputFragment() {
     }
 
-    public static InputHighScoreFragment newInstance(int score, int rank) {
-        InputHighScoreFragment f = new InputHighScoreFragment();
+    public static HighScoreInputFragment newInstance(int score, int rank) {
+        HighScoreInputFragment f = new HighScoreInputFragment();
 
         Bundle args = new Bundle();
         args.putInt("score", score);
@@ -53,14 +49,7 @@ public class InputHighScoreFragment extends DialogFragment {
         return f;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        score = getArguments().getInt("score");
-        rank = getArguments().getInt("rank");
-    }
-
-    @Override
+    @Override @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = View.inflate(getContext(), R.layout.dialog_new_high_score, null);
         ButterKnife.bind(this, view);
@@ -69,7 +58,7 @@ public class InputHighScoreFragment extends DialogFragment {
         builder.setTitle(getString(R.string.memory_game_dialog_title_new_high_score));
         builder.setView(view);
 
-        dialogHighScoreText.setText(getString(R.string.memory_game_dialog_text_new_high_score, score, rank));
+        dialogHighScoreText.setText(getString(R.string.memory_game_dialog_text_new_high_score, getArguments().getInt("score"), getArguments().getInt("rank")));
         dialogHighScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,7 +73,7 @@ public class InputHighScoreFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            listener = (InputHighScoreListener) context;
+            listener = (IHighScoreInputFragmentListener) context;
         } catch (ClassCastException castException) {
             /** The activity does not implement the listener. */
         }
@@ -94,7 +83,7 @@ public class InputHighScoreFragment extends DialogFragment {
         if (validatePlayerName(dialogHighScoreInput.getText().toString())) {
             dialogHighScoreInputGroup.setError(null);
             dialogHighScoreInputGroup.setErrorEnabled(false);
-            listener.onInputHighScore(dialogHighScoreInput.getText().toString());
+            listener.onHighScore(dialogHighScoreInput.getText().toString());
 
             getDialog().dismiss();
         } else {
