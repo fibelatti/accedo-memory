@@ -1,8 +1,9 @@
-package com.fibelatti.accedomemory.adapters;
+package com.fibelatti.accedomemory.views.adapters;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,19 +16,25 @@ import com.fibelatti.accedomemory.R;
 import com.fibelatti.accedomemory.models.Card;
 import com.fibelatti.accedomemory.utils.ConfigurationUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MemoryGameAdapter extends RecyclerView.Adapter<MemoryGameAdapter.CardViewHolder> {
+public class HighScoreAdapter extends RecyclerView.Adapter<HighScoreAdapter.CardViewHolder> {
 
     private Context context;
     private List<Card> cardList;
 
-    public MemoryGameAdapter(Context context, List<Card> cardList) {
+    public HighScoreAdapter(Context context) {
         this.context = context;
+        this.cardList = new ArrayList<>();
+    }
+
+    public void setCardList(List<Card> cardList) {
         this.cardList = cardList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -48,7 +55,7 @@ public class MemoryGameAdapter extends RecyclerView.Adapter<MemoryGameAdapter.Ca
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
         Card card = cardList.get(position);
-        holder.image.setImageDrawable(card.getImage());
+        holder.image.setImageDrawable(ContextCompat.getDrawable(context, card.getDrawableId()));
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.os.Handler;
 
 import com.fibelatti.accedomemory.Constants;
 import com.fibelatti.accedomemory.R;
+import com.fibelatti.accedomemory.db.Database;
 import com.fibelatti.accedomemory.models.Card;
 import com.fibelatti.accedomemory.models.MatchResult;
 import com.squareup.otto.Subscribe;
@@ -18,8 +19,9 @@ public class GameHelper {
 
     private List<IGameHelperListener> listeners = new ArrayList<>();
 
-    private List<Card> currentGame = new ArrayList<>(16);
+    private List<Card> currentGame;
     private int currentScore = 0;
+    private int currentMatches = 0;
     private boolean isMatched = false;
     private Card firstCard, secondCard;
 
@@ -47,8 +49,19 @@ public class GameHelper {
         this.listeners.remove(listener);
     }
 
+    public List<Card> getCurrentGame() {
+        return currentGame != null ? currentGame : createGame();
+    }
+
+    public int getCurrentScore() {
+        return currentScore;
+    }
+
     public List<Card> createGame() {
         currentGame = new ArrayList<>(16);
+        currentScore = 0;
+        currentMatches = 0;
+
         List<Integer> images = new ArrayList<>(16);
 
         for (int i = 0; i < 2; i++) {
@@ -86,6 +99,11 @@ public class GameHelper {
                     BusHelper.getInstance().getBus().post(new MatchResult(isMatched));
                     notifyCurrentScoreChanged();
 
+                    if (isMatched) {
+                        currentMatches++;
+                        checkGameState();
+                    }
+
                     isMatched = false;
                     firstCard = null;
                     secondCard = null;
@@ -96,9 +114,33 @@ public class GameHelper {
         }
     }
 
+    private void checkGameState() {
+        if (currentMatches == Constants.PAIRS_QUANTITY) {
+            int currentScoreRank = Database.highScoreDao.fetchAllHighScoresHigherThan(currentScore).size() + 1;
+
+            if (currentScoreRank <= Constants.HIGH_SCORE_QUANTITY) {
+                notifyNewHighScore(currentScoreRank);
+            } else {
+                notifyGameFinished(currentScoreRank);
+            }
+        }
+    }
+
     private void notifyCurrentScoreChanged() {
         for (IGameHelperListener listener : listeners) {
             listener.onCurrentScoreChanged(currentScore);
+        }
+    }
+
+    private void notifyNewHighScore(int rank) {
+        for (IGameHelperListener listener : listeners) {
+            listener.onNewHighScore(rank, currentScore);
+        }
+    }
+
+    private void notifyGameFinished(int rank) {
+        for (IGameHelperListener listener : listeners) {
+            listener.onGameFinished(rank, currentScore);
         }
     }
 }

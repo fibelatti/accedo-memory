@@ -13,8 +13,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_margin="@dimen/card_margin"
-        android:alpha="0"
         android:background="?android:attr/selectableItemBackground"
+        android:descendantFocusability="blocksDescendants"
         card_view:cardCornerRadius="@dimen/card_radius">
 
         <ImageView
@@ -31,6 +31,7 @@
         android:layout_gravity="center"
         android:layout_margin="@dimen/card_margin"
         android:background="?android:attr/selectableItemBackground"
+        android:descendantFocusability="blocksDescendants"
         card_view:cardCornerRadius="@dimen/card_radius">
 
         <ImageView
