@@ -23,7 +23,6 @@ public class MemoryGamePresenter
         this.context = context;
         this.view = view;
         this.gameHelper = GameHelper.getInstance();
-        this.onCreate();
     }
 
     public static MemoryGamePresenter createPresenter(Context context, IMemoryGameView view) {
@@ -49,6 +48,8 @@ public class MemoryGamePresenter
 
     @Override
     public void onDestroy() {
+        GameHelper.getInstance().removeListener(this);
+
         this.context = null;
         this.view = null;
         this.gameHelper = null;

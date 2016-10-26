@@ -3,7 +3,6 @@ package com.fibelatti.accedomemory.views.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -49,14 +48,15 @@ public class HighScoreInputFragment extends DialogFragment {
         return f;
     }
 
-    @Override @NonNull
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = View.inflate(getContext(), R.layout.dialog_new_high_score, null);
         ButterKnife.bind(this, view);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.memory_game_dialog_title_new_high_score));
-        builder.setView(view);
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.memory_game_dialog_title_new_high_score))
+                .setView(view)
+                .create();
 
         dialogHighScoreText.setText(getString(R.string.memory_game_dialog_text_new_high_score, getArguments().getInt("score"), getArguments().getInt("rank")));
         dialogHighScoreButton.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +66,7 @@ public class HighScoreInputFragment extends DialogFragment {
             }
         });
 
-        return builder.create();
+        return dialog;
     }
 
     @Override
