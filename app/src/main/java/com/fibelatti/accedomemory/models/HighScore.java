@@ -1,7 +1,5 @@
 package com.fibelatti.accedomemory.models;
 
-import com.fibelatti.accedomemory.db.Database;
-
 public class HighScore {
     private Long id;
     private String playerName;
@@ -47,12 +45,5 @@ public class HighScore {
 
     public void setPlayerScore(Integer playerScore) {
         this.playerScore = playerScore;
-    }
-
-    public void refresh() {
-        HighScore hs = Database.highScoreDao.fetchHighScoreById(this.id);
-
-        this.playerName = hs.getPlayerName();
-        this.playerScore = hs.getPlayerScore();
     }
 }

@@ -11,5 +11,5 @@ public interface IMemoryGamePresenter {
 
     void newGame();
 
-    boolean saveNewHighScore(String name);
+    boolean saveNewHighScore(String name, int score);
 }

@@ -92,7 +92,7 @@ public class GameHelper implements IGameHelper {
     public boolean checkCard(int index) {
         cardsClicked++;
         
-        if (cardsClicked <= 2 && index != -1 && currentGame.get(index).isFaceDown()) {
+        if (cardsClicked <= 2 && currentGame.get(index).isFaceDown()) {
             if (firstCardIndex == -1) {
                 firstCardIndex = index;
                 currentGame.get(index).setStatusFaceUp();
@@ -171,11 +171,11 @@ public class GameHelper implements IGameHelper {
     }
 
     private void notifyRound() {
+        cardsClicked = 0;
+
         for (IGameHelperListener listener : listeners) {
             listener.onRound(currentGame);
         }
-
-        cardsClicked = 0;
     }
 
     private void notifyNewHighScore(int rank) {

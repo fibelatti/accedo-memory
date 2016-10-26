@@ -56,7 +56,9 @@ public class HighScoreAdapter extends BaseAdapter {
 
         view = LayoutInflater.from(context).inflate(R.layout.list_item_high_score, null);
 
-        int height = viewGroup.getMeasuredHeight() / Constants.HIGH_SCORE_QUANTITY;
+        int height = (viewGroup.getMeasuredHeight()
+                - context.getResources().getDimensionPixelSize(R.dimen.subtitle_height))
+                / Constants.HIGH_SCORE_QUANTITY;
 
         view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
 
