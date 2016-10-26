@@ -4,7 +4,6 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -126,7 +125,6 @@ public class MemoryGameAdapter extends BaseAdapter {
             } else {
                 cardFront.setAlpha(1.0f);
                 cardBack.setAlpha(0.0f);
-                ViewCompat.setElevation(cardGroup, context.getResources().getDimension(R.dimen.card_elevation_enabled));
             }
         }
 
@@ -139,7 +137,6 @@ public class MemoryGameAdapter extends BaseAdapter {
             } else {
                 cardFront.setAlpha(0.0f);
                 cardBack.setAlpha(1.0f);
-                ViewCompat.setElevation(cardGroup, context.getResources().getDimension(R.dimen.card_elevation_enabled));
             }
         }
 
