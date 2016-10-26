@@ -6,4 +6,10 @@ import java.util.List;
 
 public interface IMemoryGameView {
     void onGameChanged(List<Card> cardList);
+
+    void onCurrentScoreChanged(int currentScore);
+
+    void onNewHighScore(int rank, int score);
+
+    void onGameFinished(int rank, int score);
 }

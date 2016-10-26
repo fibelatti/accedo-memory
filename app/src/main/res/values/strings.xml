@@ -15,4 +15,15 @@
     <string name="memory_game_dialog_title_new_game">New Game</string>
     <string name="memory_game_dialog_text_new_game">Your progress will be lost, are you sure?</string>
 
+    <string name="memory_game_dialog_title_new_high_score">New High Score!!</string>
+    <string name="memory_game_dialog_text_new_high_score">Your score was %1$d, ranked at %2$d. Please enter your name:</string>
+
+    <string name="memory_game_dialog_title_game_finished">Game Over</string>
+    <string name="memory_game_dialog_text_game_finished">Your score was %1$d, ranked at %2$d.</string>
+
+    <!-- DialogNewHighScore -->
+    <string name="dialog_new_high_score_hint">Player Name</string>
+    <string name="dialog_new_high_score_button">Add score</string>
+    <string name="dialog_new_high_score_input_validation">Invalid input!</string>
+
 </resources>

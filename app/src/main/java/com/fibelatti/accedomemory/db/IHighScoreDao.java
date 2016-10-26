@@ -9,7 +9,9 @@ public interface IHighScoreDao {
 
     List<HighScore> fetchAllHighScores();
 
-    List<HighScore> fetchTopHighScores(int amount);
+    List<HighScore> fetchAllHighScoresHigherThan(int score);
+
+    List<HighScore> fetchTopHighScores(int limit);
 
     boolean saveHighScore(HighScore highScore);
 }

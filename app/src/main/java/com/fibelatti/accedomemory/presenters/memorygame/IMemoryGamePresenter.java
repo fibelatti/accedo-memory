@@ -10,4 +10,6 @@ public interface IMemoryGamePresenter {
     void onDestroy();
 
     void newGame();
+
+    boolean saveNewHighScore(String name);
 }
