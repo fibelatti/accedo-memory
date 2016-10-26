@@ -120,8 +120,10 @@ public class MemoryGameActivity extends AppCompatActivity
     public void onNewHighScore(int rank, int score) {
         presenter.newGame();
 
-        DialogFragment inputHighScoreFragment = HighScoreInputFragment.newInstance(score, rank);
-        inputHighScoreFragment.show(getSupportFragmentManager(), HighScoreInputFragment.TAG);
+        if (!MemoryGameActivity.this.isFinishing()) {
+            DialogFragment inputHighScoreFragment = HighScoreInputFragment.newInstance(score, rank);
+            inputHighScoreFragment.show(getSupportFragmentManager(), HighScoreInputFragment.TAG);
+        }
     }
 
     @Override
