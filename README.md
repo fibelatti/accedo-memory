@@ -2,6 +2,9 @@
 
 Color memory game, developed for Accedo.
 
+## Status
+[![Build Status](https://travis-ci.org/fibelatti/accedo-memory.svg?branch=master)](https://travis-ci.org/fibelatti/accedo-memory)
+
 ## LICENSE
 
 The MIT License (MIT)
