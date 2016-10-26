@@ -6,7 +6,10 @@ import com.fibelatti.accedomemory.db.Database;
 import com.fibelatti.accedomemory.helpers.GameHelper;
 import com.fibelatti.accedomemory.helpers.IGameHelper;
 import com.fibelatti.accedomemory.helpers.IGameHelperListener;
+import com.fibelatti.accedomemory.models.Card;
 import com.fibelatti.accedomemory.models.HighScore;
+
+import java.util.List;
 
 public class MemoryGamePresenter
         implements IMemoryGamePresenter,
@@ -64,6 +67,11 @@ public class MemoryGamePresenter
     @Override
     public void onCurrentScoreChanged(int currentScore) {
         if (view != null) view.onCurrentScoreChanged(currentScore);
+    }
+
+    @Override
+    public void onRound(List<Card> cardList) {
+        if (view != null) view.onRound(cardList);
     }
 
     @Override

@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 
 import com.fibelatti.accedomemory.R;
 import com.fibelatti.accedomemory.helpers.GameHelper;
-import com.fibelatti.accedomemory.helpers.IGameHelperResultListener;
 import com.fibelatti.accedomemory.models.Card;
 import com.fibelatti.accedomemory.utils.ConfigurationUtils;
 
@@ -36,6 +35,7 @@ public class MemoryGameAdapter extends BaseAdapter {
     public void setCardList(List<Card> cardList) {
         this.cardList.clear();
         this.cardList.addAll(cardList);
+
         notifyDataSetChanged();
     }
 
@@ -78,7 +78,7 @@ public class MemoryGameAdapter extends BaseAdapter {
         return view;
     }
 
-    public class CardViewHolder implements View.OnClickListener, IGameHelperResultListener {
+    public class CardViewHolder implements View.OnClickListener {
         @BindView(R.id.card_group)
         RelativeLayout cardGroup;
         @BindView(R.id.card_front_image)
@@ -102,17 +102,8 @@ public class MemoryGameAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View view) {
-            if (GameHelper.getInstance().addResultListener(this, index)) {
+            if (GameHelper.getInstance().checkCard(index)) {
                 setCardFaceUp(true);
-            }
-        }
-
-        @Override
-        public void onResult(boolean isMatched) {
-            if (isMatched) {
-                setCardMatched();
-            } else {
-                setCardFaceDown(true);
             }
         }
 
