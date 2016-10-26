@@ -6,32 +6,32 @@ import com.fibelatti.accedomemory.Constants;
 import com.fibelatti.accedomemory.R;
 import com.fibelatti.accedomemory.db.Database;
 import com.fibelatti.accedomemory.models.Card;
-import com.fibelatti.accedomemory.models.MatchResult;
-import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GameHelper {
+public class GameHelper implements IGameHelper {
     private static final Object syncLock = new Object();
-    private static GameHelper instance;
+    private static IGameHelper instance;
 
     private List<IGameHelperListener> listeners = new ArrayList<>();
+    private List<IGameHelperResultListener> resultListeners = new ArrayList<>();
 
     private List<Card> currentGame;
-    private int currentScore = 0;
-    private int currentMatches = 0;
-    private boolean isMatched = false;
-    private Card firstCard, secondCard;
+    private int currentScore;
+    private int currentMatches;
+    private int cardsClicked;
+    private boolean isMatched;
+    private int firstCardIndex;
+    private int secondCardIndex;
 
     private Handler handler = new Handler();
 
     private GameHelper() {
-        BusHelper.getInstance().getBus().register(this);
     }
 
-    public static GameHelper getInstance() {
+    public static IGameHelper getInstance() {
         if (instance == null) {
             synchronized (syncLock) {
                 if (instance == null)
@@ -41,26 +41,31 @@ public class GameHelper {
         return instance;
     }
 
+    @Override
     public void addListener(IGameHelperListener listener) {
-        this.listeners.add(listener);
+        listeners.add(listener);
     }
 
+    @Override
     public void removeListener(IGameHelperListener listener) {
-        this.listeners.remove(listener);
+        listeners.remove(listener);
     }
 
+    @Override
     public List<Card> getCurrentGame() {
         return currentGame != null ? currentGame : createGame();
     }
 
+    @Override
     public int getCurrentScore() {
         return currentScore;
     }
 
+    @Override
     public List<Card> createGame() {
         currentGame = new ArrayList<>(16);
-        currentScore = 0;
-        currentMatches = 0;
+
+        initVariables();
 
         List<Integer> images = new ArrayList<>(16);
 
@@ -84,45 +89,82 @@ public class GameHelper {
         return currentGame;
     }
 
-    @Subscribe
-    public void cardFlipped(Card currentCard) {
-        if (firstCard == null) {
-            firstCard = currentCard;
-        } else if (secondCard == null) {
-            secondCard = currentCard;
-            isMatched = firstCard.getDrawableId() == secondCard.getDrawableId();
-            currentScore += isMatched ? Constants.SCORE_SUCCESS : Constants.SCORE_FAILURE;
+    @Override
+    public boolean addResultListener(IGameHelperResultListener listener, int index) {
+        cardsClicked++;
+        
+        if (cardsClicked <= 2 && index != -1 && currentGame.get(index).isFaceDown()) {
+            resultListeners.add(listener);
 
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    BusHelper.getInstance().getBus().post(new MatchResult(isMatched));
-                    notifyCurrentScoreChanged();
+            if (firstCardIndex == -1) {
+                firstCardIndex = index;
+                currentGame.get(index).setStatusFaceUp();
+            } else if (secondCardIndex == -1) {
+                secondCardIndex = index;
+                currentGame.get(index).setStatusFaceUp();
+                isMatched = currentGame.get(firstCardIndex).getDrawableId() == currentGame.get(secondCardIndex).getDrawableId();
 
-                    if (isMatched) {
-                        currentMatches++;
-                        checkGameState();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyMatchResult(isMatched);
+
+                        setCurrentScore(currentScore + (isMatched ? Constants.SCORE_SUCCESS : Constants.SCORE_FAILURE));
+
+                        if (isMatched) {
+                            currentMatches++;
+                            currentGame.get(firstCardIndex).setStatusMatched();
+                            currentGame.get(secondCardIndex).setStatusMatched();
+                            checkGameState();
+                        } else {
+                            currentGame.get(firstCardIndex).setStatusFaceDown();
+                            currentGame.get(secondCardIndex).setStatusFaceDown();
+                        }
+
+                        isMatched = false;
+                        firstCardIndex = -1;
+                        secondCardIndex = -1;
                     }
+                };
 
-                    isMatched = false;
-                    firstCard = null;
-                    secondCard = null;
-                }
-            };
+                handler.postDelayed(runnable, isMatched ? 0 : Constants.ROUND_DELAY);
+            }
 
-            handler.postDelayed(runnable, isMatched ? 0 : Constants.ROUND_DELAY);
+            return true;
         }
+        
+        return false;
+    }
+
+    private void initVariables() {
+        resultListeners.clear();
+        setCurrentScore(0);
+        currentMatches = 0;
+        cardsClicked = 0;
+        isMatched = false;
+        firstCardIndex = -1;
+        secondCardIndex = -1;
+    }
+
+    private void setCurrentScore(int currentScore) {
+        this.currentScore = currentScore;
+        notifyCurrentScoreChanged();
     }
 
     private void checkGameState() {
         if (currentMatches == Constants.PAIRS_QUANTITY) {
-            int currentScoreRank = Database.highScoreDao.fetchAllHighScoresHigherThan(currentScore).size() + 1;
+            final int currentScoreRank = Database.highScoreDao.fetchAllHighScoresHigherThan(currentScore).size() + 1;
 
-            if (currentScoreRank <= Constants.HIGH_SCORE_QUANTITY) {
-                notifyNewHighScore(currentScoreRank);
-            } else {
-                notifyGameFinished(currentScoreRank);
-            }
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (currentScoreRank <= Constants.HIGH_SCORE_QUANTITY) {
+                        notifyNewHighScore(currentScoreRank);
+                    } else {
+                        notifyGameFinished(currentScoreRank);
+                    }
+                }
+            }, Constants.ROUND_DELAY);
         }
     }
 
@@ -142,5 +184,14 @@ public class GameHelper {
         for (IGameHelperListener listener : listeners) {
             listener.onGameFinished(rank, currentScore);
         }
+    }
+
+    private void notifyMatchResult(boolean isMatched) {
+        for (IGameHelperResultListener listener : resultListeners) {
+            listener.onResult(isMatched);
+        }
+
+        cardsClicked = 0;
+        resultListeners.clear();
     }
 }

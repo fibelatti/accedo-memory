@@ -125,10 +125,10 @@ public class MemoryGameActivity extends AppCompatActivity
 
     @Override
     public void onNewHighScore(int rank, int score) {
-        adapter.setCardList(new ArrayList<Card>());
-
         DialogFragment inputHighScoreFragment = InputHighScoreFragment.newInstance(score, rank);
         inputHighScoreFragment.show(getSupportFragmentManager(), "dialog");
+
+        adapter.setCardList(new ArrayList<Card>());
     }
 
     @Override

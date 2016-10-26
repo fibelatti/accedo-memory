@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.fibelatti.accedomemory.db.Database;
 import com.fibelatti.accedomemory.helpers.GameHelper;
+import com.fibelatti.accedomemory.helpers.IGameHelper;
 import com.fibelatti.accedomemory.helpers.IGameHelperListener;
 import com.fibelatti.accedomemory.models.HighScore;
 
@@ -13,7 +14,7 @@ public class MemoryGamePresenter
 
     private Context context;
     private IMemoryGameView view;
-    private GameHelper gameHelper;
+    private IGameHelper gameHelper;
 
     private MemoryGamePresenter(Context context, IMemoryGameView view) {
         this.context = context;
@@ -30,7 +31,7 @@ public class MemoryGamePresenter
     public void onCreate() {
         GameHelper.getInstance().addListener(this);
 
-        view.onGameChanged(gameHelper.getCurrentGame());
+        if (view != null) view.onGameChanged(gameHelper.getCurrentGame());
     }
 
     @Override
@@ -52,7 +53,7 @@ public class MemoryGamePresenter
 
     @Override
     public void newGame() {
-        view.onGameChanged(gameHelper.createGame());
+        if (view != null) view.onGameChanged(gameHelper.createGame());
     }
 
     @Override
@@ -62,16 +63,16 @@ public class MemoryGamePresenter
 
     @Override
     public void onCurrentScoreChanged(int currentScore) {
-        view.onCurrentScoreChanged(currentScore);
+        if (view != null) view.onCurrentScoreChanged(currentScore);
     }
 
     @Override
     public void onNewHighScore(int rank, int score) {
-        view.onNewHighScore(rank, score);
+        if (view != null) view.onNewHighScore(rank, score);
     }
 
     @Override
     public void onGameFinished(int rank, int score) {
-        view.onGameFinished(rank, score);
+        if (view != null) view.onGameFinished(rank, score);
     }
 }

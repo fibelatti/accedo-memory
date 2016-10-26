@@ -4,6 +4,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,11 +14,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.fibelatti.accedomemory.R;
-import com.fibelatti.accedomemory.helpers.BusHelper;
+import com.fibelatti.accedomemory.helpers.GameHelper;
+import com.fibelatti.accedomemory.helpers.IGameHelperResultListener;
 import com.fibelatti.accedomemory.models.Card;
-import com.fibelatti.accedomemory.models.MatchResult;
 import com.fibelatti.accedomemory.utils.ConfigurationUtils;
-import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,6 @@ import butterknife.ButterKnife;
 public class MemoryGameAdapter extends RecyclerView.Adapter<MemoryGameAdapter.CardViewHolder> {
     private Context context;
     private List<Card> cardList;
-    public int cardsClicked = 0;
 
     public MemoryGameAdapter(Context context) {
         this.context = context;
@@ -36,7 +35,8 @@ public class MemoryGameAdapter extends RecyclerView.Adapter<MemoryGameAdapter.Ca
     }
 
     public void setCardList(List<Card> cardList) {
-        this.cardList = cardList;
+        this.cardList.clear();
+        this.cardList.addAll(cardList);
         notifyDataSetChanged();
     }
 
@@ -59,6 +59,14 @@ public class MemoryGameAdapter extends RecyclerView.Adapter<MemoryGameAdapter.Ca
     public void onBindViewHolder(CardViewHolder holder, int position) {
         Card card = cardList.get(position);
         holder.image.setImageDrawable(ContextCompat.getDrawable(context, card.getDrawableId()));
+
+        if (card.isFaceDown()) {
+            holder.setCardFaceDown(false);
+        } else if (card.isFaceUp()) {
+            holder.setCardFaceUp(false);
+        } else if (card.isFaceMatched()) {
+            holder.setCardMatched(false);
+        }
     }
 
     @Override
@@ -66,18 +74,19 @@ public class MemoryGameAdapter extends RecyclerView.Adapter<MemoryGameAdapter.Ca
         return cardList.size();
     }
 
-    public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public Card card;
-
+    public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, IGameHelperResultListener {
+        @BindView(R.id.card_group)
+        RelativeLayout cardGroup;
         @BindView(R.id.card_front_image)
-        public ImageView image;
+        ImageView image;
         @BindView(R.id.card_front)
-        public CardView cardFront;
+        CardView cardFront;
         @BindView(R.id.card_back)
-        public CardView cardBack;
+        CardView cardBack;
 
         final AnimatorSet setFlipOut = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_out);
         final AnimatorSet setFlipIn = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_in);
+        final AnimatorSet setCardElevationDown = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.elevate_down);
 
         public CardViewHolder(View view) {
             super(view);
@@ -87,37 +96,55 @@ public class MemoryGameAdapter extends RecyclerView.Adapter<MemoryGameAdapter.Ca
 
         @Override
         public void onClick(View view) {
-            cardsClicked++;
-            card = cardList.get(getAdapterPosition());
+            if (GameHelper.getInstance().addResultListener(this, getAdapterPosition())) {
+                setCardFaceUp(true);
+            }
+        }
 
-            if (cardsClicked <= 2 && card.isFaceDown()) {
+        @Override
+        public void onResult(boolean isMatched) {
+            if (isMatched) {
+                setCardMatched(true);
+            } else {
+                setCardFaceDown(true);
+            }
+        }
+
+        public void setCardFaceUp(boolean animate) {
+            if (animate) {
                 setFlipOut.setTarget(cardBack);
                 setFlipIn.setTarget(cardFront);
                 setFlipOut.start();
                 setFlipIn.start();
-
-                card.setStatusFaceUp();
-                BusHelper.getInstance().getBus().post(card);
-                BusHelper.getInstance().getBus().register(this);
+            } else {
+                cardFront.setAlpha(1.0f);
+                cardBack.setAlpha(0.0f);
+                ViewCompat.setElevation(cardGroup, context.getResources().getDimension(R.dimen.card_elevation_enabled));
             }
         }
 
-        @Subscribe
-        public void matchResult(MatchResult result) {
-            cardsClicked = 0;
-
-            if (result.isMatched()) {
-                card.setStatusMatched();
-            } else {
+        public void setCardFaceDown(boolean animate) {
+            if (animate) {
                 setFlipOut.setTarget(cardFront);
                 setFlipIn.setTarget(cardBack);
                 setFlipOut.start();
                 setFlipIn.start();
-
-                card.setStatusFaceDown();
+            } else {
+                cardFront.setAlpha(0.0f);
+                cardBack.setAlpha(1.0f);
+                ViewCompat.setElevation(cardGroup, context.getResources().getDimension(R.dimen.card_elevation_enabled));
             }
+        }
 
-            BusHelper.getInstance().getBus().unregister(this);
+        public void setCardMatched(boolean animate) {
+            if (animate) {
+                setCardElevationDown.setTarget(cardGroup);
+                setCardElevationDown.start();
+            } else {
+                cardFront.setAlpha(1.0f);
+                cardBack.setAlpha(0.0f);
+                ViewCompat.setElevation(cardGroup, context.getResources().getDimension(R.dimen.card_elevation_disabled));
+            }
         }
     }
 }

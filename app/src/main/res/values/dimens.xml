@@ -25,6 +25,8 @@
 
     <dimen name="card_margin">4dp</dimen>
     <dimen name="card_radius">2dp</dimen>
+    <dimen name="card_elevation_enabled">5dp</dimen>
+    <dimen name="card_elevation_disabled">0dp</dimen>
 
     <dimen name="activity_memory_game_score_layout_height">40dp</dimen>
 </resources>

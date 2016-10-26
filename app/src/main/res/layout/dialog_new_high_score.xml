@@ -8,6 +8,7 @@
         android:id="@+id/dialog_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_regular"
         android:text="@string/memory_game_dialog_text_new_high_score"
         android:textColor="@color/colorBlack"
         android:textSize="@dimen/text_size_regular" />
@@ -29,7 +30,7 @@
             android:imeOptions="actionNext"
             android:inputType="textCapSentences"
             android:maxLength="@integer/text_max_length_25"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/text_size_regular" />
     </android.support.design.widget.TextInputLayout>
