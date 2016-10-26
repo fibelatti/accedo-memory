@@ -2,7 +2,6 @@ package com.fibelatti.accedomemory.views.activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.DialogFragment;
@@ -103,13 +102,6 @@ public class MemoryGameActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        gridView.setNumColumns(ConfigurationUtils.getColumnsBasedOnTypeAndOrientation(context));
-        if (adapter != null) adapter.notifyDataSetChanged();
     }
 
     @Override
