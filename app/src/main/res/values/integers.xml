@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="game_columns_quantity_phone_portrait">4</integer>
+    <integer name="game_columns_quantity_phone_landscape">8</integer>
+    <integer name="game_columns_quantity_tablet">4</integer>
+
+    <integer name="game_rows_quantity_phone_portrait">4</integer>
+    <integer name="game_rows_quantity_phone_landscape">2</integer>
+    <integer name="game_rows_quantity_tablet">4</integer>
+
+    <integer name="text_max_length_25">25</integer>
+</resources>

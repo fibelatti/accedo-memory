@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".views.activities.GroupActivity">
+
+    <item
+        android:id="@+id/action_high_scores"
+        android:icon="@drawable/ic_star_border_white_36dp"
+        android:orderInCategory="1"
+        android:title="@string/memory_game_menu_action_high_scores"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_new_game"
+        android:icon="@drawable/ic_new_white_36dp"
+        android:orderInCategory="2"
+        android:title="@string/memory_game_menu_action_new_game"
+        app:showAsAction="always" />
+</menu>
