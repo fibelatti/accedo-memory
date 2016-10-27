@@ -8,6 +8,7 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -63,7 +64,7 @@ public class MemoryGameAdapter extends BaseAdapter {
 
         int height = viewGroup.getMeasuredHeight() / ConfigurationUtils.getRowsBasedOnTypeAndOrientation(context);
 
-        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+        view.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
 
         CardViewHolder holder = new CardViewHolder(view, i);
         holder.image.setImageDrawable(ContextCompat.getDrawable(context, card.getDrawableId()));
