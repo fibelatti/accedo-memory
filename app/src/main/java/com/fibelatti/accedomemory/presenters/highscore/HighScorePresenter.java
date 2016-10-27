@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.fibelatti.accedomemory.Constants;
 import com.fibelatti.accedomemory.db.Database;
+import com.fibelatti.accedomemory.models.HighScore;
 
 public class HighScorePresenter
     implements IHighScorePresenter {
@@ -22,7 +23,7 @@ public class HighScorePresenter
 
     @Override
     public void onCreate() {
-        if (view != null) view.onDataFetched(Database.highScoreDao.fetchTopHighScores(Constants.HIGH_SCORE_QUANTITY));
+        fetchData();
     }
 
     @Override
@@ -40,4 +41,15 @@ public class HighScorePresenter
         this.context = null;
         this.view = null;
     }
+
+    @Override
+    public void fetchData() {
+        if (view != null) view.onDataFetched(Database.highScoreDao.fetchTopHighScores(Constants.HIGH_SCORE_QUANTITY));
+    }
+
+    @Override
+    public boolean saveNewHighScore(String name, int score) {
+        return Database.highScoreDao.saveHighScore(new HighScore(name, score));
+    }
+
 }

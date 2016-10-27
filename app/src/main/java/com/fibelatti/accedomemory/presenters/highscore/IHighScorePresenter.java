@@ -8,4 +8,8 @@ public interface IHighScorePresenter {
     void onResume();
 
     void onDestroy();
+
+    void fetchData();
+
+    boolean saveNewHighScore(String name, int score);
 }

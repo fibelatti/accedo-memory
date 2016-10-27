@@ -31,11 +31,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MemoryGameActivity extends AppCompatActivity
-        implements IMemoryGameView, IHighScoreInputFragmentListener {
+        implements IMemoryGameView {
     private Context context;
     private IMemoryGamePresenter presenter;
     private MemoryGameAdapter adapter;
     private AlertDialogHelper dialogHelper;
+    private Navigator navigator;
 
     //region View bindings
     @BindView(R.id.coordinator_layout)
@@ -59,6 +60,7 @@ public class MemoryGameActivity extends AppCompatActivity
         setUpPresenter();
 
         dialogHelper = new AlertDialogHelper(this);
+        navigator = new Navigator(this);
 
         presenter.onCreate();
     }
@@ -94,7 +96,7 @@ public class MemoryGameActivity extends AppCompatActivity
                 newGame();
                 return true;
             case R.id.action_high_scores:
-                navigateToHighScores();
+                navigator.goToHighScores();
                 return true;
         }
 
@@ -119,11 +121,7 @@ public class MemoryGameActivity extends AppCompatActivity
     @Override
     public void onNewHighScore(int rank, int score) {
         presenter.newGame();
-
-        if (!MemoryGameActivity.this.isFinishing()) {
-            DialogFragment inputHighScoreFragment = HighScoreInputFragment.newInstance(score, rank);
-            inputHighScoreFragment.show(getSupportFragmentManager(), HighScoreInputFragment.TAG);
-        }
+        navigator.goToHighScores(true, rank, score);
     }
 
     @Override
@@ -135,15 +133,9 @@ public class MemoryGameActivity extends AppCompatActivity
                 getString(R.string.memory_game_dialog_text_game_finished, score, rank),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        navigateToHighScores();
+                        navigator.goToHighScores();
                     }
                 });
-    }
-
-    @Override
-    public void onHighScore(String name, int score) {
-        presenter.saveNewHighScore(name, score);
-        navigateToHighScores();
     }
 
     private void setUpPresenter() {
@@ -180,10 +172,5 @@ public class MemoryGameActivity extends AppCompatActivity
                     }
                 },
                 null);
-    }
-
-    private void navigateToHighScores() {
-        Navigator navigator = new Navigator(this);
-        navigator.goToHighScores();
     }
 }
