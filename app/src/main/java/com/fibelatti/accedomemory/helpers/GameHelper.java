@@ -20,7 +20,6 @@ public class GameHelper implements IGameHelper {
     private List<Card> currentGame;
     private int currentScore;
     private int currentMatches;
-    private int cardsClicked;
     private boolean isMatched;
     private int firstCardIndex;
     private int secondCardIndex;
@@ -90,9 +89,7 @@ public class GameHelper implements IGameHelper {
 
     @Override
     public boolean checkCard(int index) {
-        cardsClicked++;
-        
-        if (cardsClicked <= 2 && currentGame.get(index).isFaceDown()) {
+        if ((firstCardIndex == -1 || secondCardIndex == -1) && currentGame.get(index).isFaceDown()) {
             if (firstCardIndex == -1) {
                 firstCardIndex = index;
                 currentGame.get(index).setStatusFaceUp();
@@ -116,11 +113,11 @@ public class GameHelper implements IGameHelper {
                             currentGame.get(secondCardIndex).setStatusFaceDown();
                         }
 
-                        notifyRound();
-
                         isMatched = false;
                         firstCardIndex = -1;
                         secondCardIndex = -1;
+
+                        notifyRound();
                     }
                 };
 
@@ -136,7 +133,6 @@ public class GameHelper implements IGameHelper {
     private void initVariables() {
         setCurrentScore(0);
         currentMatches = 0;
-        cardsClicked = 0;
         isMatched = false;
         firstCardIndex = -1;
         secondCardIndex = -1;
@@ -171,8 +167,6 @@ public class GameHelper implements IGameHelper {
     }
 
     private void notifyRound() {
-        cardsClicked = 0;
-
         for (IGameHelperListener listener : listeners) {
             listener.onRound(currentGame);
         }
