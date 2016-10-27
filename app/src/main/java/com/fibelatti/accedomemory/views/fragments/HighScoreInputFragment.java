@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.fibelatti.accedomemory.Constants;
 import com.fibelatti.accedomemory.R;
 
 import java.util.regex.Matcher;
@@ -26,6 +27,7 @@ public class HighScoreInputFragment extends DialogFragment {
     private IHighScoreInputFragmentListener listener;
 
     private int score;
+    private int rank;
 
     @BindView(R.id.dialog_input_group)
     TextInputLayout dialogHighScoreInputGroup;
@@ -43,8 +45,8 @@ public class HighScoreInputFragment extends DialogFragment {
         HighScoreInputFragment f = new HighScoreInputFragment();
 
         Bundle args = new Bundle();
-        args.putInt("score", score);
-        args.putInt("rank", rank);
+        args.putInt(Constants.INTENT_EXTRA_SCORE, score);
+        args.putInt(Constants.INTENT_EXTRA_RANK, rank);
         f.setArguments(args);
 
         return f;
@@ -60,9 +62,17 @@ public class HighScoreInputFragment extends DialogFragment {
                 .setView(view)
                 .create();
 
-        score = getArguments().getInt("score");
+        score = getArguments().getInt(Constants.INTENT_EXTRA_SCORE);
+        rank = getArguments().getInt(Constants.INTENT_EXTRA_RANK);
 
-        dialogHighScoreText.setText(getString(R.string.memory_game_dialog_text_new_high_score, score, getArguments().getInt("rank")));
+        if (savedInstanceState != null) {
+            dialogHighScoreInput.setText(savedInstanceState.getString(Constants.INTENT_EXTRA_NAME));
+            score = Integer.parseInt(savedInstanceState.getString(Constants.INTENT_EXTRA_SCORE));
+            rank = Integer.parseInt(savedInstanceState.getString(Constants.INTENT_EXTRA_RANK));
+        }
+
+        dialogHighScoreText.setText(getString(R.string.memory_game_dialog_text_new_high_score,
+                score, rank));
         dialogHighScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,6 +91,14 @@ public class HighScoreInputFragment extends DialogFragment {
         } catch (ClassCastException castException) {
             /** The activity does not implement the listener. */
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(Constants.INTENT_EXTRA_NAME, dialogHighScoreInput.getText().toString());
+        outState.putString(Constants.INTENT_EXTRA_SCORE, Integer.toString(score));
+        outState.putString(Constants.INTENT_EXTRA_RANK, Integer.toString(rank));
     }
 
     private void validateHighScoreDialogInput() {

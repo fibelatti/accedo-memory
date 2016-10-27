@@ -2,12 +2,10 @@ package com.fibelatti.accedomemory.presenters.memorygame;
 
 import android.content.Context;
 
-import com.fibelatti.accedomemory.db.Database;
 import com.fibelatti.accedomemory.helpers.GameHelper;
 import com.fibelatti.accedomemory.helpers.IGameHelper;
 import com.fibelatti.accedomemory.helpers.IGameHelperListener;
 import com.fibelatti.accedomemory.models.Card;
-import com.fibelatti.accedomemory.models.HighScore;
 
 import java.util.List;
 
@@ -61,11 +59,6 @@ public class MemoryGamePresenter
     @Override
     public void newGame() {
         if (view != null) view.onGameChanged(gameHelper.createGame());
-    }
-
-    @Override
-    public boolean saveNewHighScore(String name, int score) {
-        return Database.highScoreDao.saveHighScore(new HighScore(name, score));
     }
 
     @Override
