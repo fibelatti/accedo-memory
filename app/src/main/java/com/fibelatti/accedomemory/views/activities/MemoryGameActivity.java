@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,8 +21,6 @@ import com.fibelatti.accedomemory.presenters.memorygame.MemoryGamePresenter;
 import com.fibelatti.accedomemory.utils.ConfigurationUtils;
 import com.fibelatti.accedomemory.views.Navigator;
 import com.fibelatti.accedomemory.views.adapters.MemoryGameAdapter;
-import com.fibelatti.accedomemory.views.fragments.HighScoreInputFragment;
-import com.fibelatti.accedomemory.views.fragments.IHighScoreInputFragmentListener;
 
 import java.util.List;
 
@@ -120,14 +117,13 @@ public class MemoryGameActivity extends AppCompatActivity
 
     @Override
     public void onNewHighScore(int rank, int score) {
-        presenter.newGame();
         navigator.goToHighScores(true, rank, score);
+
+        presenter.newGame();
     }
 
     @Override
     public void onGameFinished(int rank, int score) {
-        presenter.newGame();
-
         dialogHelper.createOkOnlyDialog(
                 getString(R.string.memory_game_dialog_title_game_finished),
                 getString(R.string.memory_game_dialog_text_game_finished, score, rank),
@@ -136,6 +132,8 @@ public class MemoryGameActivity extends AppCompatActivity
                         navigator.goToHighScores();
                     }
                 });
+
+        presenter.newGame();
     }
 
     private void setUpPresenter() {
