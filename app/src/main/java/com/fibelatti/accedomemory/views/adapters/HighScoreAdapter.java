@@ -4,8 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fibelatti.accedomemory.Constants;
@@ -60,7 +60,7 @@ public class HighScoreAdapter extends BaseAdapter {
                 - context.getResources().getDimensionPixelSize(R.dimen.subtitle_height))
                 / Constants.HIGH_SCORE_QUANTITY;
 
-        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+        view.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
 
         HighScoreViewHolder holder = new HighScoreViewHolder(view);
         holder.textRank.setText(context.getString(R.string.high_score_column_text_rank, i + 1));
